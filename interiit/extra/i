@@ -1,0 +1,42 @@
+<?php
+ if (!empty($_POST))
+ {
+ $obj = json_decode($_POST['mydata']);
+
+$image=$obj->{'image'};
+$user_name=$obj->{'user_name'};
+$location=$obj->{'location'};
+$desc=$obj->{'desc'};
+$status=$obj->{'status'};
+echo( "image=".$image."</br>username=".$user_name."</br>location=".$location."</br>desc=".$desc."</br>status=".$status);
+ }
+ else
+ {
+ echo ("false");
+ }
+$dbhost = 'localhost';
+$dbuser = 'smanocha';
+$dbpass = '$smanocha$';
+$conn = mysql_connect($dbhost, $dbuser, $dbpass);
+if(! $conn )
+{
+
+      die('Could not connect: ' . mysql_error());                               
+
+}
+$sql =" INSERT INTO userinfo ".
+       "(user_name,desc,location,image,status) ".
+       "VALUES ( '$user_name','$desc','$location','$image,$status')";
+mysql_select_db('interiit');
+echo ($sql);
+$retval = mysql_query( $sql, $conn );
+if(! $retval )
+{
+  die('Could not enter data: ' . mysql_error());
+}
+echo ("\nEntered data successfully\n");
+mysql_close($conn);
+?>
+
+ 
+?>

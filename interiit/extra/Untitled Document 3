@@ -1,0 +1,177 @@
+<!DOCTYPE html><!--HTML5 doctype-->
+<html>
+<head>
+  <title>Your New Application</title>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=0" />
+  <style type="text/css">
+    /* Prevent copy paste for all elements except text fields */
+    *  { -webkit-user-select:none; -webkit-tap-highlight-color:rgba(255, 255, 255, 0); }
+    input, textarea  { -webkit-user-select:text; }
+  </style>
+    <link rel="stylesheet" type="text/css" href="css/icons.css" />    
+    <link rel="stylesheet" type="text/css" href="css/af.ui.css" />
+    <script src='intelxdk.js'></script>
+    <script src='xhr.js'></script>
+    <script type="text/javascript" charset="utf-8" src="js/appframework.ui.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="plugins/af.scroller.js"></script>
+    <script type="text/javascript">
+    /* This code is used to run as soon as Intel activates */
+    var onDeviceReady=function(){
+      //hide splash screen
+      intel.xdk.device.hideSplashScreen();
+    };
+    document.addEventListener("intel.xdk.device.ready",onDeviceReady,false);
+    </script>
+</head>
+<body>
+<div id="afui" class="">
+                <div id="content">
+                 <div title="Scroller" class="panel" id="main">
+                    <p>This shows a demo of scroller plugin's infinte-scroll and pull-to-refresh features on a list view and text view.</p>
+                    <p><b>pull-to-refresh</b>: This allow your to new content to panel by pulling the scroller to top and releasing.</p>
+                    <p><b>infinite-scroll</b>: This allow your to new content to panel when scoller reaches the end at bottom.</p>
+                    <ul class="list">
+                        <li>
+                            <a href="#scrollerList">List Scroller</a>
+                        </li>
+                   </ul>
+                </div>    
+                
+                
+                
+                <div title="Scroller" class="panel" id="scrollerList">
+                    <script>
+                        var scrollerList;
+                        $.ui.ready(function () {
+                            scrollerList = $("#scrollerList").scroller();
+                           // scrollerList.addPullToRefresh();
+                            scrollerList.addInfinite();
+                            $.bind(scrollerList, 'scrollend', function () {
+                                console.log("scroll end");
+                            });
+                           // $.bind(scrollerList, 'scrollstart', function () {
+                             //   console.log("scroll start");
+                            //});
+                            
+                            $.bind(scrollerList, "refresh-trigger", function () {
+                                console.log("refresh-trigger");
+                            });
+                            var hideClose;
+                            $.bind(scrollerList, "refresh-release", function () {
+                                console.log("refresh-release");
+                                var that = this;
+                                clearTimeout(hideClose);
+                                hideClose = setTimeout(function () { // get content from your api using ajax and display instead of setTimeout.
+                                    console.log("hiding manually refresh");
+                                    that.hideRefresh();
+                                }, 2000);
+                                return false; //tells it to not auto-cancel the refresh
+                            });
+                            $.bind(scrollerList, "refresh-cancel", function () {
+                                console.log("refresh-cancel");
+                                clearTimeout(hideClose);
+                            });
+                            $.bind(scrollerList, "refresh-finish", function () {
+                                console.log("refresh-finish");
+                                // add new content at top of list
+                                //var item_number = $("#updateList>li").length + 1;
+                                //$("#updateList").prepend("<li>Item "+item_number+" (via Pull Refresh)</li>");
+                            });
+                            
+                            $.bind(scrollerList, "infinite-scroll", function () {
+                                console.log("infinite-scroll");
+                                var self = this;
+                                $("#scrollerList").find("#infinite").text("Loading...")
+                                scrollerList.addInfinite();
+                                setTimeout(function () { // get content from your api using ajax and display instead of setTimeout.
+                                    $("#scrollerList").find("#infinite").text("Load More");
+                                    // add new content at bottom of list
+                                    //var item_number = $("#updateList>li").length + 1;
+                                   
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    var resp={};
+                                    resp['id']= 20;
+                                    resp['number']=5;
+                                    var query=JSON.stringify(resp);
+                                    console.log(query);
+                                    $.ajax(
+                                    {
+                                    type: 'POST',
+                                    url: 'http://pclub.in/interiit/select.php',
+                                    data:{mydata: query},
+                                    success: function(data) 
+                                    { 
+                                          
+                                        
+                                        $("#updateList").append(data);
+                                        $("#updateList").html($("#updateList").html()); // ios workaround for weird list stretch on append.
+                                        
+                                       // $('#largeDiv').append(data);
+                                        //window.id=window.id+5;
+                                      
+                                        console.log(data); 
+                                    },
+                                    error: function( jqXHR, textStatus ) 
+                                    {
+                                        alert( "Request failed:in side  " + textStatus );
+                                    },
+                                    });
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    
+                                    self.clearInfinite();
+                                }, 3000);
+                            });
+                            $.bind(scrollerList, "infinite-scroll-end", function () {
+                                console.log("infinite-scroll-end");
+                            });
+                            
+                            scrollerList.enable();
+                        });
+                    </script>
+                    <ul class="list" id="updateList">
+                        <li>Item 1</li>
+                        <li>Item 2</li>
+                        <li>Item 3</li>
+                        <li>Item 4</li>
+                        <li>Item 5</li>
+                        <li>Item 6</li>
+                        <li>Item 7</li>
+                        <li>Item 8</li>
+                        <li>Item 9</li>
+                        <li>Item 10</li>
+                        <li>Item 11</li>
+                        <li>Item 12</li>
+                    </ul>
+                    <div id='infinite' style='height:60px;line-height:60px;font-weight:bold;text-align:center'>Load More</div>
+                </div>
+                
+                
+                
+                </div>
+                </div>
+</body>
+</html>
+
